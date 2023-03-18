@@ -1,11 +1,9 @@
 <script lang="ts">
-  import Counter from './lib/Counter.svelte'
+  import Sample from './components/Sample.svelte'
 </script>
 
 <main>
-  <div class="card">
-    <Counter />
-  </div>
+  <Sample />
 </main>
 
 <style>
