@@ -1,14 +1,11 @@
-// import { RGBToHex } from './lib/RgbToHex'
+const rgbToHex = (r: number, g: number, b: number): string => {
+  const componentToHex = (c: number): string => {
+    const hex = Math.round(c * 255).toString(16)
+    return hex.length == 1 ? '0' + hex : hex
+  }
 
-const RGBToHex = (r: number, g: number, b: number) => {
-  const convertedR =
-    r.toString(16).length === 1 ? '0' + r.toString(16) : r.toString(16)
-  const convertedG =
-    g.toString(16).length === 1 ? '0' + g.toString(16) : g.toString(16)
-  const convertedB =
-    b.toString(16).length === 1 ? '0' + b.toString(16) : b.toString(16)
-
-  return '#' + convertedR + convertedG + convertedB
+  const hex = '#' + componentToHex(r) + componentToHex(g) + componentToHex(b)
+  return hex
 }
 
 figma.showUI(__html__)
@@ -16,19 +13,19 @@ figma.showUI(__html__)
 figma.ui.onmessage = (msg) => {
   if (msg.type === 'generate-tokens') {
     const paintStyles = figma.getLocalPaintStyles()
-    const generateStyleData = () => {
-      let result = ''
-      for (const val of paintStyles) {
-        if ('color' in val.paints[0]) {
-          result += `, ${val.name}: ${RGBToHex(
-            val.paints[0].color.r,
-            val.paints[0].color.g,
-            val.paints[0].color.b
-          )}`
-        }
-      }
-      return result
-    }
+    const generateStyleData = (): string =>
+      paintStyles
+        .map((val) => {
+          if ('color' in val.paints[0]) {
+            return `${val.name}: ${rgbToHex(
+              val.paints[0].color.r,
+              val.paints[0].color.g,
+              val.paints[0].color.b
+            )}`
+          }
+        })
+        .join(', ')
+
     const printStyleData = generateStyleData()
 
     const textStyles = figma.getLocalTextStyles()
