@@ -1,18 +1,18 @@
 const rgbToHex = (r: number, g: number, b: number): string => {
   const componentToHex = (c: number): string => {
-    const hex = Math.round(c * 255).toString(16)
-    return hex.length == 1 ? '0' + hex : hex
-  }
+    const hex = Math.round(c * 255).toString(16);
+    return hex.length == 1 ? '0' + hex : hex;
+  };
 
-  const hex = '#' + componentToHex(r) + componentToHex(g) + componentToHex(b)
-  return hex
-}
+  const hex = '#' + componentToHex(r) + componentToHex(g) + componentToHex(b);
+  return hex;
+};
 
-figma.showUI(__html__)
+figma.showUI(__html__, { height: 332, width: 664 });
 
 figma.ui.onmessage = (msg) => {
   if (msg.type === 'generate-tokens') {
-    const paintStyles = figma.getLocalPaintStyles()
+    const paintStyles = figma.getLocalPaintStyles();
     const generateStyleData = (): string =>
       paintStyles
         .map((val) => {
@@ -21,14 +21,14 @@ figma.ui.onmessage = (msg) => {
               val.paints[0].color.r,
               val.paints[0].color.g,
               val.paints[0].color.b
-            )}`
+            )}`;
           }
         })
-        .join(', ')
+        .join(', ');
 
-    const printStyleData = generateStyleData()
+    const printStyleData = generateStyleData();
 
-    const textStyles = figma.getLocalTextStyles()
+    const textStyles = figma.getLocalTextStyles();
     const textStyleData = textStyles.map((val) => {
       return {
         name: val.name,
@@ -37,13 +37,9 @@ figma.ui.onmessage = (msg) => {
         waight: val.fontName.style,
         letterSpacing: val.letterSpacing,
         lineHeight: val.lineHeight,
-      }
-    })
+      };
+    });
 
-    figma.ui.postMessage({ printStyleData, textStyleData })
+    figma.ui.postMessage({ printStyleData, textStyleData });
   }
-
-  if (msg.type === 'cancel') {
-    figma.closePlugin()
-  }
-}
+};

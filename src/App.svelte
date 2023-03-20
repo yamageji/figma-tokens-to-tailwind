@@ -1,10 +1,7 @@
 <script lang="ts">
-  import Sample from './components/Sample.svelte'
+  import Sample from './components/Sample.svelte';
 </script>
 
 <main>
   <Sample />
 </main>
-
-<style>
-</style>
