@@ -1,14 +1,16 @@
 <script lang="ts">
-  let count: number = 1
+  let colorData: string
+
   const generateTokens = () => {
-    parent.postMessage(
-      { pluginMessage: { type: 'generate-tokens', count } },
-      '*'
-    )
+    parent.postMessage({ pluginMessage: { type: 'generate-tokens' } }, '*')
   }
 
   const cancel = () => {
     parent.postMessage({ pluginMessage: { type: 'cancel' } }, '*')
+  }
+
+  onmessage = (event) => {
+    colorData = event.data.pluginMessage.printStyleData
   }
 </script>
 
@@ -25,4 +27,7 @@
       on:click={cancel}>Cancel</button
     >
   </div>
+  {#if colorData}
+    <div class="border border-slate-500 p-2">{colorData}</div>
+  {/if}
 </div>
