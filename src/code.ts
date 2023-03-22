@@ -1,10 +1,11 @@
-figma.showUI(__html__, { height: 600, width: 664 });
+figma.showUI(__html__, { height: 768, width: 768 });
 
 figma.ui.onmessage = (msg) => {
   if (msg.type === 'generate-tokens') {
-    const colorData = generateSemanticColorData(msg.state.prefix);
+    const semanticColorData = generateSemanticColorData(msg.state.prefix);
+    const primitiveColorData = generatePrimitiveColorData(msg.state.prefix);
     const textData = generateTextData();
-    figma.ui.postMessage({ colorData, textData });
+    figma.ui.postMessage({ semanticColorData, primitiveColorData, textData });
   }
 };
 
@@ -16,7 +17,7 @@ const rgbToHex = (r: number, g: number, b: number): string => {
   return `#${componentToHex(r)}${componentToHex(g)}${componentToHex(b)}`;
 };
 
-const standardiseColours = (r: number, g: number, b: number): string => {
+const standardiseColors = (r: number, g: number, b: number): string => {
   const standardization = (c: number): string => {
     return Math.round(c * 255).toString();
   };
@@ -60,9 +61,24 @@ const generateSemanticColorData = (prefix: string): string => {
   return JSON.stringify(styleMap, null, 2);
 };
 
-const generatePrimitiveColorData = (): string => {
+const generatePrimitiveColorData = (prefix: string): string => {
   const paintStyles = figma.getLocalPaintStyles();
-  return 'test';
+  const filterdStyle = paintStyles.filter(
+    (style) => style.name.split('/')[0] === prefix
+  );
+  const convertedStyle = filterdStyle.map((style) => {
+    const paint = style.paints[0];
+    if (paint.type === 'SOLID') {
+      return `--${style.name.replace(/\//g, '-')}: ${standardiseColors(
+        paint.color.r,
+        paint.color.g,
+        paint.color.b
+      )}`;
+    }
+  });
+  return `@layer base {\n  :root {\n    ${convertedStyle.join(
+    ';\n    '
+  )};\n  }\n}`;
 };
 
 const generateTextData = (): string => {
