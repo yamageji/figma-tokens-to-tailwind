@@ -1,10 +1,9 @@
-export const RGBToHex = (r: number, g: number, b: number) => {
-  const convertedR =
-    r.toString(16).length === 1 ? '0' + r.toString(16) : r.toString(16)
-  const convertedG =
-    g.toString(16).length === 1 ? '0' + g.toString(16) : g.toString(16)
-  const convertedB =
-    b.toString(16).length === 1 ? '0' + b.toString(16) : b.toString(16)
+export const rgbToHex = (r: number, g: number, b: number): string => {
+  const componentToHex = (c: number): string => {
+    const hex = Math.round(c * 255).toString(16)
+    return hex.length == 1 ? '0' + hex : hex
+  }
 
-  return '#' + convertedR + convertedG + convertedB
+  const hex = '#' + componentToHex(r) + componentToHex(g) + componentToHex(b)
+  return hex
 }

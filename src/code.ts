@@ -1,45 +1,64 @@
+figma.showUI(__html__, { height: 600, width: 664 });
+
+figma.ui.onmessage = (msg) => {
+  if (msg.type === 'generate-tokens') {
+    const colorData = generateColorData();
+    const textData = generateTextData();
+
+    figma.ui.postMessage({ colorData, textData });
+  }
+};
+
 const rgbToHex = (r: number, g: number, b: number): string => {
   const componentToHex = (c: number): string => {
     const hex = Math.round(c * 255).toString(16);
     return hex.length == 1 ? '0' + hex : hex;
   };
 
-  const hex = '#' + componentToHex(r) + componentToHex(g) + componentToHex(b);
-  return hex;
+  return `#${componentToHex(r)}${componentToHex(g)}${componentToHex(b)}`;
 };
 
-figma.showUI(__html__, { height: 332, width: 664 });
+const generateColorData = (): string => {
+  const paintStyles = figma.getLocalPaintStyles();
+  const styleMap = {};
 
-figma.ui.onmessage = (msg) => {
-  if (msg.type === 'generate-tokens') {
-    const paintStyles = figma.getLocalPaintStyles();
-    const generateStyleData = (): string =>
-      paintStyles
-        .map((val) => {
-          if ('color' in val.paints[0]) {
-            return `${val.name}: ${rgbToHex(
-              val.paints[0].color.r,
-              val.paints[0].color.g,
-              val.paints[0].color.b
-            )}`;
+  paintStyles.forEach((style) => {
+    const paint = style.paints[0];
+    if (paint.type === 'SOLID') {
+      const styleNames = style.name.split('/');
+      let currentStyle = styleMap;
+      styleNames.forEach((name, index) => {
+        if (!currentStyle[name]) {
+          if (index === styleNames.length - 1) {
+            currentStyle[name] = rgbToHex(
+              paint.color.r,
+              paint.color.g,
+              paint.color.b
+            );
+          } else {
+            currentStyle[name] = {};
           }
-        })
-        .join(', ');
+        }
+        currentStyle = currentStyle[name];
+      });
+    }
+  });
 
-    const printStyleData = generateStyleData();
+  return JSON.stringify(styleMap, null, 2);
+};
 
-    const textStyles = figma.getLocalTextStyles();
-    const textStyleData = textStyles.map((val) => {
-      return {
-        name: val.name,
-        size: val.fontSize,
-        family: val.fontName.family,
-        waight: val.fontName.style,
-        letterSpacing: val.letterSpacing,
-        lineHeight: val.lineHeight,
-      };
-    });
+const generateTextData = (): string => {
+  const textStyles = figma.getLocalTextStyles();
+  const textStyleData = textStyles.map((style) => {
+    return {
+      name: style.name,
+      size: style.fontSize,
+      family: style.fontName.family,
+      waight: style.fontName.style,
+      letterSpacing: style.letterSpacing,
+      lineHeight: style.lineHeight,
+    };
+  });
 
-    figma.ui.postMessage({ printStyleData, textStyleData });
-  }
+  return textStyleData[0].name;
 };
