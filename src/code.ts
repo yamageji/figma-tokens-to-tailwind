@@ -6,7 +6,7 @@ figma.ui.onmessage = (msg) => {
       msg.state.prefix,
       msg.state.hasPrimitive,
       msg.state.classifyByType,
-      msg.state.addToExtend
+      colorGroupList
     );
     const primitiveColorData = generatePrimitiveColorData(msg.state.prefix);
     const textData = generateTextData();
@@ -48,7 +48,7 @@ const generateSemanticColorData = (
   prefix: string,
   hasPrimitive: boolean,
   classifyByType: boolean,
-  addToExtend: boolean
+  colorGroupList: Array<{ name: string; style: string }>
 ): string => {
   const paintStyles = figma.getLocalPaintStyles();
 
@@ -83,7 +83,44 @@ const generateSemanticColorData = (
     }
   });
 
-  return JSON.stringify(styleMap, null, 2);
+  return JSON.stringify(
+    styleMapToColorMap(styleMap, colorGroupList, classifyByType),
+    null,
+    2
+  );
+};
+
+interface ColorMap {
+  [key: string]: string;
+}
+
+interface StyleMap {
+  [key: string]: ColorMap;
+}
+
+const styleMapToColorMap = (
+  styleMap: StyleMap,
+  colorGroupList: Array<{ name: string; style: string }>,
+  classifyByType: boolean
+) => {
+  const colors: ColorMap = {};
+  const textColor: ColorMap = {};
+
+  colorGroupList.forEach((group) => {
+    const { name, style } = group;
+
+    if (styleMap[name]) {
+      if (classifyByType && style === 'textColor') {
+        Object.assign(textColor, styleMap[name]);
+      } else {
+        Object.assign(colors, {
+          [name]: styleMap[name],
+        });
+      }
+    }
+  });
+
+  return { colors, textColor };
 };
 
 const generatePrimitiveColorData = (prefix: string): string => {

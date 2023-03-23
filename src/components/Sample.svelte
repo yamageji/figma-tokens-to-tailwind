@@ -102,7 +102,7 @@
       </div>
 
       <pre
-        class="h-[400px] w-full overflow-auto break-words rounded-b bg-code-surface px-3 py-2 font-mono text-sm leading-snug text-code-text">{#if primitiveColorData}{primitiveColorData}{/if}</pre>
+        class="h-[400px] w-full overflow-auto break-words rounded-b bg-code-surface px-3 py-2 font-mono text-sm leading-snug text-code-text">{#if primitiveColorData && hasPrimitive}{primitiveColorData}{/if}</pre>
     </div>
   </div>
 </div>
