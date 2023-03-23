@@ -1,13 +1,33 @@
-figma.showUI(__html__, { height: 768, width: 768 });
+figma.showUI(__html__, { height: 472, width: 1024 });
 
 figma.ui.onmessage = (msg) => {
   if (msg.type === 'generate-tokens') {
-    const semanticColorData = generateSemanticColorData(msg.state.prefix);
+    const semanticColorData = generateSemanticColorData(
+      msg.state.prefix,
+      msg.state.hasPrimitive,
+      msg.state.classifyByType,
+      msg.state.addToExtend
+    );
     const primitiveColorData = generatePrimitiveColorData(msg.state.prefix);
     const textData = generateTextData();
     figma.ui.postMessage({ semanticColorData, primitiveColorData, textData });
   }
 };
+
+const colorGroupList = [
+  { name: 'accent', style: 'accentColor' },
+  { name: 'bg', style: 'backgroundColor' },
+  { name: 'border', style: 'borderColor' },
+  { name: 'shadow', style: 'boxShadowColor' },
+  { name: 'caret', style: 'caretColor' },
+  { name: 'divide', style: 'divideColor' },
+  { name: 'outline', style: 'outlineColor' },
+  { name: 'placeholder', style: 'placeholderColor' },
+  { name: 'ring', style: 'ringColor' },
+  { name: 'ring-offset', style: 'ringOffsetColor' },
+  { name: 'text', style: 'textColor' },
+  { name: 'decoration', style: 'textDecorationColor' },
+];
 
 const rgbToHex = (r: number, g: number, b: number): string => {
   const componentToHex = (c: number): string => {
@@ -24,7 +44,12 @@ const standardiseColors = (r: number, g: number, b: number): string => {
   return `${standardization(r)} ${standardization(g)} ${standardization(b)}`;
 };
 
-const generateSemanticColorData = (prefix: string): string => {
+const generateSemanticColorData = (
+  prefix: string,
+  hasPrimitive: boolean,
+  classifyByType: boolean,
+  addToExtend: boolean
+): string => {
   const paintStyles = figma.getLocalPaintStyles();
 
   const styleMap = {};
@@ -38,7 +63,7 @@ const generateSemanticColorData = (prefix: string): string => {
       styleNames.forEach((name, index) => {
         if (!currentStyle[name]) {
           if (index === styleNames.length - 1) {
-            if (description) {
+            if (description && hasPrimitive) {
               currentStyle[
                 name
               ] = `rgb(var(--${prefix}-${description}) / <alpha-value>)`;
@@ -63,22 +88,24 @@ const generateSemanticColorData = (prefix: string): string => {
 
 const generatePrimitiveColorData = (prefix: string): string => {
   const paintStyles = figma.getLocalPaintStyles();
-  const filterdStyle = paintStyles.filter(
-    (style) => style.name.split('/')[0] === prefix
+  const filteredStyles = paintStyles.filter((style) =>
+    style.name.startsWith(`${prefix}/`)
   );
-  const convertedStyle = filterdStyle.map((style) => {
+  const convertedStyles = filteredStyles.map((style) => {
     const paint = style.paints[0];
-    if (paint.type === 'SOLID') {
-      return `--${style.name.replace(/\//g, '-')}: ${standardiseColors(
-        paint.color.r,
-        paint.color.g,
-        paint.color.b
-      )}`;
-    }
+    if (!paint || paint.type !== 'SOLID') return '';
+    const { r, g, b } = paint.color;
+    return `--${style.name.replace(/\//g, '-')}: ${standardiseColors(r, g, b)}`;
   });
-  return `@layer base {\n  :root {\n    ${convertedStyle.join(
-    ';\n    '
-  )};\n  }\n}`;
+  const rootStyles = convertedStyles
+    .filter((style) => style !== '')
+    .join(';\n    ');
+
+  return `@layer base {
+  :root {
+    ${rootStyles};
+  }
+}`;
 };
 
 const generateTextData = (): string => {
