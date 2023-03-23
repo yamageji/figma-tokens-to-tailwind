@@ -111,7 +111,7 @@ const styleMapToColorMap = (
   };
   colorTypes.forEach((colorType) => (colorMaps[colorType] = {}));
 
-  const lestObject = { ...styleMap };
+  const lestObject = Object.assign({}, styleMap);
   colorGroupList.forEach(({ name, style }) => {
     if (Object.keys(styleMap).includes(name)) {
       Object.assign(colorMaps[style], styleMap[name]);
