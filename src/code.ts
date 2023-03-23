@@ -103,24 +103,38 @@ const styleMapToColorMap = (
   colorGroupList: Array<{ name: string; style: string }>,
   classifyByType: boolean
 ) => {
-  const colors: ColorMap = {};
-  const textColor: ColorMap = {};
+  const colorTypes = [
+    'accentColor',
+    'backgroundColor',
+    'borderColor',
+    'boxShadowColor',
+    'caretColor',
+    'divideColor',
+    'outlineColor',
+    'placeholderColor',
+    'ringColor',
+    'ringOffsetColor',
+    'textColor',
+    'textDecorationColor',
+  ];
+
+  const colorMaps: { [key: string]: ColorMap } = {};
+  colorTypes.forEach((colorType) => (colorMaps[colorType] = {}));
 
   colorGroupList.forEach((group) => {
     const { name, style } = group;
-
     if (styleMap[name]) {
-      if (classifyByType && style === 'textColor') {
-        Object.assign(textColor, styleMap[name]);
-      } else {
-        Object.assign(colors, {
-          [name]: styleMap[name],
-        });
-      }
+      const colorMap =
+        classifyByType && colorTypes.includes(style)
+          ? colorMaps[style]
+          : colorMaps['colors'];
+      Object.assign(colorMap, styleMap[name]);
     }
   });
 
-  return { colors, textColor };
+  return Object.fromEntries(
+    Object.entries(colorMaps).filter(([_, value]) => Object.keys(value).length)
+  );
 };
 
 const generatePrimitiveColorData = (prefix: string): string => {
