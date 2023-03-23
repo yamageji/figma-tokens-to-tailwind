@@ -1,4 +1,4 @@
-figma.showUI(__html__, { height: 472, width: 1024 });
+figma.showUI(__html__, { height: 472, width: 1026 });
 
 figma.ui.onmessage = (msg) => {
   if (msg.type === 'generate-tokens') {
@@ -103,32 +103,19 @@ const styleMapToColorMap = (
   colorGroupList: Array<{ name: string; style: string }>,
   classifyByType: boolean
 ) => {
-  const colorTypes = [
-    'accentColor',
-    'backgroundColor',
-    'borderColor',
-    'boxShadowColor',
-    'caretColor',
-    'divideColor',
-    'outlineColor',
-    'placeholderColor',
-    'ringColor',
-    'ringOffsetColor',
-    'textColor',
-    'textDecorationColor',
-  ];
+  if (!classifyByType) return styleMap;
 
-  const colorMaps: { [key: string]: ColorMap } = {};
+  const colorTypes = colorGroupList.map((group) => group.style);
+  const colorMaps: { [key: string]: ColorMap } = {
+    colors: {},
+  };
   colorTypes.forEach((colorType) => (colorMaps[colorType] = {}));
 
-  colorGroupList.forEach((group) => {
-    const { name, style } = group;
-    if (styleMap[name]) {
-      const colorMap =
-        classifyByType && colorTypes.includes(style)
-          ? colorMaps[style]
-          : colorMaps['colors'];
-      Object.assign(colorMap, styleMap[name]);
+  colorGroupList.forEach(({ name, style }) => {
+    if (Object.keys(styleMap).includes(name)) {
+      Object.assign(colorMaps[style], styleMap[name]);
+    } else {
+      Object.assign(colorMaps['colors'], styleMap[name]);
     }
   });
 

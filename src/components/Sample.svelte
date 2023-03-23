@@ -59,7 +59,7 @@
     </div>
 
     <button
-      class="mt-6 w-full rounded bg-teal-600 py-1 font-normal text-teal-50 duration-200 hover:bg-teal-700"
+      class="mt-6 w-full rounded bg-teal-700 py-1 font-normal text-teal-50 duration-200 hover:bg-teal-800"
       type="button"
       on:click={generateTokens}>generate code</button
     >
@@ -71,7 +71,7 @@
         class="flex h-fit w-full items-center justify-between rounded-t bg-code-title px-3 py-2 text-sm text-white"
       >
         <div
-          class="before:contents-[''] flex items-center gap-1.5 before:h-2 before:w-2 before:rounded-full before:bg-teal-600"
+          class="before:contents-[''] flex items-center gap-1.5 before:h-2 before:w-2 before:rounded-full before:bg-teal-500"
         >
           tailwind.config.js
         </div>
@@ -91,7 +91,7 @@
         class="flex h-fit w-full items-center justify-between rounded-t bg-code-title px-3 py-2 text-sm text-white"
       >
         <div
-          class="before:contents-[''] flex items-center gap-1.5 before:h-2 before:w-2 before:rounded-full before:bg-teal-600"
+          class="before:contents-[''] flex items-center gap-1.5 before:h-2 before:w-2 before:rounded-full before:bg-teal-500"
         >
           main.css
         </div>
