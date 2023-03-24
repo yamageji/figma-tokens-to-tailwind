@@ -46,10 +46,17 @@
     textArea.select();
     document.execCommand('copy');
 
-    if (event.target.id === 'semantic') {
+    //
+    if (event.target.id === 'semantic' && isCopiedSemantic === false) {
       isCopiedSemantic = true;
-    } else if (event.target.id === 'primitive') {
+      setTimeout(() => {
+        isCopiedSemantic = false;
+      }, 2000);
+    } else if (event.target.id === 'primitive' && isCopiedPrimitive === false) {
       isCopiedPrimitive = true;
+      setTimeout(() => {
+        isCopiedPrimitive = false;
+      }, 2000);
     }
   };
 
@@ -111,20 +118,22 @@
         >
           tailwind.config.js
         </div>
-        <button
-          id="semantic"
-          type="button"
-          on:click={copyText}
-          class="flex cursor-pointer items-center gap-1"
-        >
-          {#if isCopiedSemantic}
-            <IconClipboard />
-            Copy Code
-          {:else}
-            <IconClipboardCopyed />
-            Copied!
-          {/if}
-        </button>
+        {#if semanticColorData}
+          <button
+            id="semantic"
+            type="button"
+            on:click={copyText}
+            class="flex cursor-pointer items-center gap-1"
+          >
+            {#if isCopiedSemantic}
+              <IconClipboardCopyed />
+              Copied!
+            {:else}
+              <IconClipboard />
+              Copy Code
+            {/if}
+          </button>
+        {/if}
       </div>
       <div>
         <pre
@@ -141,15 +150,22 @@
         >
           main.css
         </div>
-        <button
-          id="primitive"
-          type="button"
-          on:click={copyText}
-          class="flex cursor-pointer items-center gap-1"
-        >
-          <IconClipboard />
-          copy code
-        </button>
+        {#if primitiveColorData}
+          <button
+            id="primitive"
+            type="button"
+            on:click={copyText}
+            class="flex cursor-pointer items-center gap-1"
+          >
+            {#if isCopiedPrimitive}
+              <IconClipboardCopyed />
+              Copied!
+            {:else}
+              <IconClipboard />
+              Copy Code
+            {/if}
+          </button>
+        {/if}
       </div>
 
       <pre
