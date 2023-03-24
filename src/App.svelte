@@ -1,7 +1,7 @@
 <script lang="ts">
-  import Sample from './components/Sample.svelte';
+  import MainPanel from './components/MainPanel.svelte';
 </script>
 
 <main>
-  <Sample />
+  <MainPanel />
 </main>

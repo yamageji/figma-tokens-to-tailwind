@@ -1,6 +1,7 @@
 <script lang="ts">
   import { onMount } from 'svelte';
   import IconClipboard from './IconClipboard.svelte';
+  import IconClipboardCopyed from './IconClipboardCopyed.svelte';
 
   let primitiveColorData: string;
   let semanticColorData: string;
@@ -10,7 +11,13 @@
   let hasPrimitive = false;
   let classifyByType = false;
 
+  let isCopiedSemantic = false;
+  let isCopiedPrimitive = false;
+
   const generateTokens = () => {
+    isCopiedSemantic = false;
+    isCopiedPrimitive = false;
+
     parent.postMessage(
       {
         pluginMessage: {
@@ -38,6 +45,12 @@
     textArea.focus();
     textArea.select();
     document.execCommand('copy');
+
+    if (event.target.id === 'semantic') {
+      isCopiedSemantic = true;
+    } else if (event.target.id === 'primitive') {
+      isCopiedPrimitive = true;
+    }
   };
 
   onmessage = (event) => {
@@ -104,8 +117,13 @@
           on:click={copyText}
           class="flex cursor-pointer items-center gap-1"
         >
-          <IconClipboard />
-          copy code
+          {#if isCopiedSemantic}
+            <IconClipboard />
+            Copy Code
+          {:else}
+            <IconClipboardCopyed />
+            Copied!
+          {/if}
         </button>
       </div>
       <div>
