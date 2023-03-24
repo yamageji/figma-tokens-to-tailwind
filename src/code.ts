@@ -8,7 +8,10 @@ figma.ui.onmessage = (msg) => {
       msg.state.classifyByType,
       colorGroupList
     );
-    const primitiveColorData = generatePrimitiveColorData(msg.state.prefix);
+    const primitiveColorData = generatePrimitiveColorData(
+      msg.state.prefix,
+      msg.state.hasPrimitive
+    );
     const textData = generateTextData();
     figma.ui.postMessage({ semanticColorData, primitiveColorData, textData });
   }
@@ -83,11 +86,24 @@ const generateSemanticColorData = (
     }
   });
 
-  return JSON.stringify(
-    styleMapToColorMap(styleMap, colorGroupList, classifyByType),
+  const jsonSemanticColorData = JSON.stringify(
+    styleMapToColorMap(
+      styleMap,
+      prefix,
+      hasPrimitive,
+      classifyByType,
+      colorGroupList
+    ),
     null,
     2
   );
+  const formatSemanticColorData = jsonSemanticColorData
+    .trim()
+    .slice(1, -1)
+    .replace(/^\s{2}/gm, '')
+    .replace(/^\s+/, '');
+
+  return formatSemanticColorData;
 };
 
 interface ColorMap {
@@ -100,32 +116,42 @@ interface StyleMap {
 
 const styleMapToColorMap = (
   styleMap: StyleMap,
-  colorGroupList: Array<{ name: string; style: string }>,
-  classifyByType: boolean
+  prefix: string,
+  hasPrimitive: boolean,
+  classifyByType: boolean,
+  colorGroupList: Array<{ name: string; style: string }>
 ) => {
-  if (!classifyByType) return styleMap;
-
   const colorTypes = colorGroupList.map((group) => group.style);
   const colorMaps: { [key: string]: ColorMap } = {
     colors: {},
   };
   colorTypes.forEach((colorType) => (colorMaps[colorType] = {}));
 
+  if (hasPrimitive) delete styleMap[prefix];
   const lestObject = Object.assign({}, styleMap);
-  colorGroupList.forEach(({ name, style }) => {
-    if (Object.keys(styleMap).includes(name)) {
-      Object.assign(colorMaps[style], styleMap[name]);
-      delete lestObject[name];
-    }
-  });
-  Object.assign(colorMaps['colors'], lestObject);
+  if (classifyByType) {
+    colorGroupList.forEach(({ name, style }) => {
+      if (Object.keys(styleMap).includes(name)) {
+        Object.assign(colorMaps[style], styleMap[name]);
+        delete lestObject[name];
+      }
+    });
+    Object.assign(colorMaps['colors'], lestObject);
+  } else {
+    Object.assign(colorMaps['colors'], styleMap);
+  }
 
   return Object.fromEntries(
     Object.entries(colorMaps).filter(([_, value]) => Object.keys(value).length)
   );
 };
 
-const generatePrimitiveColorData = (prefix: string): string => {
+const generatePrimitiveColorData = (
+  prefix: string,
+  hasPrimitive: boolean
+): string => {
+  if (!hasPrimitive) return '';
+
   const paintStyles = figma.getLocalPaintStyles();
   const filteredStyles = paintStyles.filter((style) =>
     style.name.startsWith(`${prefix}/`)

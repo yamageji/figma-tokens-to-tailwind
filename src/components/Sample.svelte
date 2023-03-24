@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { onMount } from 'svelte';
   import IconClipboard from './IconClipboard.svelte';
 
   let primitiveColorData: string;
@@ -8,14 +9,13 @@
   let prefix = 'primitive';
   let hasPrimitive = false;
   let classifyByType = false;
-  let addToExtend = false;
 
   const generateTokens = () => {
     parent.postMessage(
       {
         pluginMessage: {
           type: 'generate-tokens',
-          state: { prefix, hasPrimitive, classifyByType, addToExtend },
+          state: { prefix, hasPrimitive, classifyByType },
         },
       },
       '*'
@@ -27,9 +27,11 @@
     primitiveColorData = event.data.pluginMessage.primitiveColorData;
     textData = event.data.pluginMessage.textData;
   };
+
+  onMount(() => generateTokens());
 </script>
 
-<div class="flex gap-8 p-4">
+<div class="m-4 flex gap-8">
   <div class="w-[200px] flex-shrink-0">
     <h2 class="text-lg font-bold">Settings</h2>
     <div class="mt-2 flex flex-col gap-1">
@@ -45,11 +47,6 @@
           bind:value={prefix}
           class="w-full rounded-sm border border-slate-500 px-1 py-0.5"
         />
-      </label>
-
-      <label class="flex items-center gap-1">
-        <input type="checkbox" bind:checked={addToExtend} />
-        add to extend
       </label>
 
       <label class="flex items-center gap-1">
@@ -102,7 +99,7 @@
       </div>
 
       <pre
-        class="h-[400px] w-full overflow-auto break-words rounded-b bg-code-surface px-3 py-2 font-mono text-sm leading-snug text-code-text">{#if primitiveColorData && hasPrimitive}{primitiveColorData}{/if}</pre>
+        class="h-[400px] w-full overflow-auto break-words rounded-b bg-code-surface px-3 py-2 font-mono text-sm leading-snug text-code-text">{#if primitiveColorData}{primitiveColorData}{/if}</pre>
     </div>
   </div>
 </div>
