@@ -22,6 +22,24 @@
     );
   };
 
+  const copyText = (event) => {
+    // textarea を作ってコピーしたいテキストを value にセット
+    let textArea = document.createElement('textarea');
+    textArea.value =
+      event.target.id === 'semantic' ? semanticColorData : primitiveColorData;
+
+    // 一応画面外に飛ばしとく
+    textArea.style.position = 'fixed';
+    textArea.style.left = '-999999px';
+    textArea.style.top = '-999999px';
+    document.body.appendChild(textArea);
+
+    // select して実行
+    textArea.focus();
+    textArea.select();
+    document.execCommand('copy');
+  };
+
   onmessage = (event) => {
     semanticColorData = event.data.pluginMessage.semanticColorData;
     primitiveColorData = event.data.pluginMessage.primitiveColorData;
@@ -36,7 +54,11 @@
     <h2 class="text-lg font-bold">Settings</h2>
     <div class="mt-2 flex flex-col gap-1">
       <label class="flex items-center gap-1">
-        <input type="checkbox" bind:checked={hasPrimitive} />
+        <input
+          type="checkbox"
+          bind:checked={hasPrimitive}
+          class="accent-teal-600"
+        />
         primitive colors
       </label>
 
@@ -50,7 +72,11 @@
       </label>
 
       <label class="flex items-center gap-1">
-        <input type="checkbox" bind:checked={classifyByType} />
+        <input
+          type="checkbox"
+          bind:checked={classifyByType}
+          class="accent-teal-600"
+        />
         classify by type
       </label>
     </div>
@@ -72,10 +98,15 @@
         >
           tailwind.config.js
         </div>
-        <span class="flex cursor-pointer items-center gap-1">
+        <button
+          id="semantic"
+          type="button"
+          on:click={copyText}
+          class="flex cursor-pointer items-center gap-1"
+        >
           <IconClipboard />
           copy code
-        </span>
+        </button>
       </div>
       <div>
         <pre
@@ -92,10 +123,15 @@
         >
           main.css
         </div>
-        <span class="flex cursor-pointer items-center gap-1">
+        <button
+          id="primitive"
+          type="button"
+          on:click={copyText}
+          class="flex cursor-pointer items-center gap-1"
+        >
           <IconClipboard />
           copy code
-        </span>
+        </button>
       </div>
 
       <pre
