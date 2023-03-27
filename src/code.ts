@@ -2,19 +2,28 @@ figma.showUI(__html__, { height: 472, width: 1026 });
 
 figma.ui.onmessage = (msg) => {
   if (msg.type === 'generate-tokens') {
-    const semanticColorData = generateSemanticColorData(
+    const semanticColorData = generateSemanticColor(
       msg.state.prefix,
       msg.state.hasPrimitive,
       msg.state.classifyByType,
       colorGroupList
     );
-    const primitiveColorData = generatePrimitiveColorData(
+    const primitiveColorData = generatePrimitiveColor(
       msg.state.prefix,
       msg.state.hasPrimitive
     );
-    const textData = generateTextData();
+    const textData = generateTextStyle();
     figma.ui.postMessage({ semanticColorData, primitiveColorData, textData });
   }
+};
+
+// 以下モジュールに切り出す
+type ColorMap = {
+  [key: string]: string;
+};
+
+type StyleMap = {
+  [key: string]: ColorMap;
 };
 
 const colorGroupList = [
@@ -40,14 +49,14 @@ const rgbToHex = (r: number, g: number, b: number): string => {
   return `#${componentToHex(r)}${componentToHex(g)}${componentToHex(b)}`;
 };
 
-const standardiseColors = (r: number, g: number, b: number): string => {
-  const standardization = (c: number): string => {
+const normalizeColor = (r: number, g: number, b: number): string => {
+  const normalization = (c: number): string => {
     return Math.round(c * 255).toString();
   };
-  return `${standardization(r)} ${standardization(g)} ${standardization(b)}`;
+  return `${normalization(r)} ${normalization(g)} ${normalization(b)}`;
 };
 
-const generateSemanticColorData = (
+const generateSemanticColor = (
   prefix: string,
   hasPrimitive: boolean,
   classifyByType: boolean,
@@ -106,14 +115,6 @@ const generateSemanticColorData = (
   return formatSemanticColorData;
 };
 
-interface ColorMap {
-  [key: string]: string;
-}
-
-interface StyleMap {
-  [key: string]: ColorMap;
-}
-
 const styleMapToColorMap = (
   styleMap: StyleMap,
   prefix: string,
@@ -146,7 +147,7 @@ const styleMapToColorMap = (
   );
 };
 
-const generatePrimitiveColorData = (
+const generatePrimitiveColor = (
   prefix: string,
   hasPrimitive: boolean
 ): string => {
@@ -160,7 +161,7 @@ const generatePrimitiveColorData = (
     const paint = style.paints[0];
     if (!paint || paint.type !== 'SOLID') return '';
     const { r, g, b } = paint.color;
-    return `--${style.name.replace(/\//g, '-')}: ${standardiseColors(r, g, b)}`;
+    return `--${style.name.replace(/\//g, '-')}: ${normalizeColor(r, g, b)}`;
   });
   const rootStyles = convertedStyles
     .filter((style) => style !== '')
@@ -173,7 +174,7 @@ const generatePrimitiveColorData = (
 }`;
 };
 
-const generateTextData = (): string => {
+const generateTextStyle = (): string => {
   const textStyles = figma.getLocalTextStyles();
   const textStyleData = textStyles.map((style) => {
     return {

@@ -1,7 +1,8 @@
 <script lang="ts">
   import { onMount } from 'svelte';
+  import IconArrowPath from './IconArrowPath.svelte';
   import IconClipboard from './IconClipboard.svelte';
-  import IconClipboardCopyed from './IconClipboardCopyed.svelte';
+  import IconClipboardCopied from './IconClipboardCopied.svelte';
 
   let primitiveColorData: string;
   let semanticColorData: string;
@@ -73,7 +74,7 @@
   <div class="w-[200px] flex-shrink-0">
     <h2 class="text-lg font-bold">Settings</h2>
     <div class="mt-2 flex flex-col gap-1">
-      <label class="flex items-center gap-1">
+      <label class="flex w-fit items-center gap-1">
         <input
           type="checkbox"
           bind:checked={hasPrimitive}
@@ -82,7 +83,7 @@
         primitive colors
       </label>
 
-      <label class="flex items-center gap-2">
+      <label class="flex w-fit items-center gap-2">
         prefix:
         <input
           type="text"
@@ -91,7 +92,7 @@
         />
       </label>
 
-      <label class="flex items-center gap-1">
+      <label class="mt-4 flex w-fit items-center gap-1">
         <input
           type="checkbox"
           bind:checked={classifyByType}
@@ -102,10 +103,12 @@
     </div>
 
     <button
-      class="mt-6 w-full rounded bg-teal-700 py-1 font-normal text-teal-50 duration-200 hover:bg-teal-800"
+      class="mt-6 flex w-full items-center justify-center gap-2 rounded bg-teal-700 py-1 font-normal text-teal-50 duration-200 hover:bg-teal-800"
       type="button"
-      on:click={generateTokens}>generate code</button
-    >
+      on:click={generateTokens}
+      >generate code
+      <IconArrowPath />
+    </button>
   </div>
 
   <div class="flex flex-grow gap-6">
@@ -126,7 +129,7 @@
             class="flex cursor-pointer items-center gap-1"
           >
             {#if isCopiedSemantic}
-              <IconClipboardCopyed />
+              <IconClipboardCopied />
               Copied!
             {:else}
               <IconClipboard />
@@ -158,7 +161,7 @@
             class="flex cursor-pointer items-center gap-1"
           >
             {#if isCopiedPrimitive}
-              <IconClipboardCopyed />
+              <IconClipboardCopied />
               Copied!
             {:else}
               <IconClipboard />
