@@ -8,7 +8,7 @@
   let semanticColorData: string;
   let textData: string;
 
-  let prefix = 'primitive';
+  let prefix = '';
   let hasPrimitive = false;
   let classifyByType = false;
 
@@ -80,7 +80,7 @@
           bind:checked={hasPrimitive}
           class="accent-teal-600"
         />
-        primitive colors
+        Primitive colours
       </label>
 
       <label class="flex w-fit items-center gap-2">
@@ -88,6 +88,7 @@
         <input
           type="text"
           bind:value={prefix}
+          placeholder="primitive"
           class="w-full rounded-sm border border-slate-500 px-1 py-0.5"
         />
       </label>
@@ -98,7 +99,7 @@
           bind:checked={classifyByType}
           class="accent-teal-600"
         />
-        classify by type
+        Classify by keys
       </label>
     </div>
 
@@ -106,7 +107,7 @@
       class="mt-6 flex w-full items-center justify-center gap-2 rounded bg-teal-700 py-1 font-normal text-teal-50 duration-200 hover:bg-teal-800"
       type="button"
       on:click={generateTokens}
-      >generate code
+      >generate
       <IconArrowPath />
     </button>
   </div>
