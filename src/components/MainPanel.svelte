@@ -1,8 +1,8 @@
 <script lang="ts">
   import { onMount } from 'svelte';
-  import IconArrowPath from './IconArrowPath.svelte';
-  import IconClipboard from './IconClipboard.svelte';
-  import IconClipboardCopied from './IconClipboardCopied.svelte';
+  import IconArrowPath from './icons/IconArrowPath.svelte';
+  import IconClipboard from './icons//IconClipboard.svelte';
+  import IconClipboardCopied from './icons//IconClipboardCopied.svelte';
 
   let primitiveColorData: string;
   let semanticColorData: string;
@@ -47,7 +47,6 @@
     textArea.select();
     document.execCommand('copy');
 
-    //
     if (event.target.id === 'semantic' && isCopiedSemantic === false) {
       isCopiedSemantic = true;
       setTimeout(() => {
