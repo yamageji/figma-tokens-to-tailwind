@@ -1,8 +1,9 @@
 <script lang="ts">
   import { onMount } from 'svelte';
+  import Button from './Button.svelte';
+  import CodeArea from './CodeArea.svelte';
+  import CheckItem from './CheckItem.svelte';
   import IconArrowPath from './icons/IconArrowPath.svelte';
-  import IconClipboard from './icons//IconClipboard.svelte';
-  import IconClipboardCopied from './icons//IconClipboardCopied.svelte';
 
   let primitiveColorData: string;
   let semanticColorData: string;
@@ -10,7 +11,7 @@
 
   let prefix = '';
   let hasPrimitive = false;
-  let classifyByType = false;
+  let classifyByKeys = false;
 
   let isCopiedSemantic = false;
   let isCopiedPrimitive = false;
@@ -23,7 +24,7 @@
       {
         pluginMessage: {
           type: 'generate-tokens',
-          state: { prefix, hasPrimitive, classifyByType },
+          state: { prefix, hasPrimitive, classifyByKeys },
         },
       },
       '*'
@@ -31,18 +32,15 @@
   };
 
   const copyText = (event) => {
-    // textarea を作ってコピーしたいテキストを value にセット
     let textArea = document.createElement('textarea');
     textArea.value =
       event.target.id === 'semantic' ? semanticColorData : primitiveColorData;
 
-    // 一応画面外に飛ばしとく
     textArea.style.position = 'fixed';
     textArea.style.left = '-999999px';
     textArea.style.top = '-999999px';
     document.body.appendChild(textArea);
 
-    // select して実行
     textArea.focus();
     textArea.select();
     document.execCommand('copy');
@@ -73,14 +71,7 @@
   <div class="w-[200px] flex-shrink-0">
     <h2 class="text-lg font-bold">Settings</h2>
     <div class="mt-2 flex flex-col gap-1">
-      <label class="flex w-fit items-center gap-1">
-        <input
-          type="checkbox"
-          bind:checked={hasPrimitive}
-          class="accent-teal-600"
-        />
-        Primitive colours
-      </label>
+      <CheckItem checked={hasPrimitive}>Primitive styles</CheckItem>
 
       <label class="flex w-fit items-center gap-2">
         prefix:
@@ -92,87 +83,29 @@
         />
       </label>
 
-      <label class="mt-4 flex w-fit items-center gap-1">
-        <input
-          type="checkbox"
-          bind:checked={classifyByType}
-          class="accent-teal-600"
-        />
-        Classify by keys
-      </label>
+      <CheckItem checked={classifyByKeys}>Classify by keys</CheckItem>
     </div>
 
-    <button
-      class="mt-6 flex w-full items-center justify-center gap-2 rounded bg-teal-700 py-1 font-normal text-teal-50 duration-200 hover:bg-teal-800"
-      type="button"
-      on:click={generateTokens}
-      >generate
+    <Button on:click={generateTokens}>
+      generate
       <IconArrowPath />
-    </button>
+    </Button>
   </div>
 
   <div class="flex flex-grow gap-6">
-    <div class="w-[360px]">
-      <div
-        class="flex h-fit w-full items-center justify-between rounded-t bg-code-title px-3 py-2 text-sm text-white"
-      >
-        <div
-          class="before:contents-[''] flex items-center gap-1.5 before:h-2 before:w-2 before:rounded-full before:bg-teal-500"
-        >
-          tailwind.config.js
-        </div>
-        {#if semanticColorData}
-          <button
-            id="semantic"
-            type="button"
-            on:click={copyText}
-            class="flex cursor-pointer items-center gap-1"
-          >
-            {#if isCopiedSemantic}
-              <IconClipboardCopied />
-              Copied!
-            {:else}
-              <IconClipboard />
-              Copy Code
-            {/if}
-          </button>
-        {/if}
-      </div>
-      <div>
-        <pre
-          class="h-[400px] w-full overflow-auto break-words rounded-b bg-code-surface px-3 py-2 font-mono text-sm leading-snug text-code-text">{#if semanticColorData}{semanticColorData}{/if}</pre>
-      </div>
-    </div>
-
-    <div class="w-[360px]">
-      <div
-        class="flex h-fit w-full items-center justify-between rounded-t bg-code-title px-3 py-2 text-sm text-white"
-      >
-        <div
-          class="before:contents-[''] flex items-center gap-1.5 before:h-2 before:w-2 before:rounded-full before:bg-teal-500"
-        >
-          main.css
-        </div>
-        {#if primitiveColorData}
-          <button
-            id="primitive"
-            type="button"
-            on:click={copyText}
-            class="flex cursor-pointer items-center gap-1"
-          >
-            {#if isCopiedPrimitive}
-              <IconClipboardCopied />
-              Copied!
-            {:else}
-              <IconClipboard />
-              Copy Code
-            {/if}
-          </button>
-        {/if}
-      </div>
-
-      <pre
-        class="h-[400px] w-full overflow-auto break-words rounded-b bg-code-surface px-3 py-2 font-mono text-sm leading-snug text-code-text">{#if primitiveColorData}{primitiveColorData}{/if}</pre>
-    </div>
+    <CodeArea
+      colorData={semanticColorData}
+      isCopied={isCopiedSemantic}
+      on:click={copyText}
+    >
+      tailwind.config.js
+    </CodeArea>
+    <CodeArea
+      colorData={primitiveColorData}
+      isCopied={isCopiedPrimitive}
+      on:click={copyText}
+    >
+      main.css
+    </CodeArea>
   </div>
 </div>
