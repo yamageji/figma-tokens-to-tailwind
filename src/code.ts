@@ -5,7 +5,7 @@ figma.ui.onmessage = (msg) => {
     const semanticColorData = generateSemanticColor(
       msg.state.prefix,
       msg.state.hasPrimitive,
-      msg.state.classifyByType,
+      msg.state.classifyByKeys,
       colorGroupList
     );
     const primitiveColorData = generatePrimitiveColor(
@@ -17,7 +17,7 @@ figma.ui.onmessage = (msg) => {
   }
 };
 
-// 以下モジュールに切り出す
+// TODO: これ以降をモジュールに切り出す
 type ColorMap = {
   [key: string]: string;
 };
@@ -59,7 +59,7 @@ const normalizeColor = (r: number, g: number, b: number): string => {
 const generateSemanticColor = (
   prefix: string,
   hasPrimitive: boolean,
-  classifyByType: boolean,
+  classifyByKeys: boolean,
   colorGroupList: Array<{ name: string; style: string }>
 ): string => {
   const paintStyles = figma.getLocalPaintStyles();
@@ -100,7 +100,7 @@ const generateSemanticColor = (
       styleMap,
       prefix,
       hasPrimitive,
-      classifyByType,
+      classifyByKeys,
       colorGroupList
     ),
     null,
@@ -119,7 +119,7 @@ const styleMapToColorMap = (
   styleMap: StyleMap,
   prefix: string,
   hasPrimitive: boolean,
-  classifyByType: boolean,
+  classifyByKeys: boolean,
   colorGroupList: Array<{ name: string; style: string }>
 ) => {
   const colorTypes = colorGroupList.map((group) => group.style);
@@ -130,7 +130,7 @@ const styleMapToColorMap = (
 
   if (hasPrimitive) delete styleMap[prefix];
   const lestObject = Object.assign({}, styleMap);
-  if (classifyByType) {
+  if (classifyByKeys) {
     colorGroupList.forEach(({ name, style }) => {
       if (Object.keys(styleMap).includes(name)) {
         Object.assign(colorMaps[style], styleMap[name]);

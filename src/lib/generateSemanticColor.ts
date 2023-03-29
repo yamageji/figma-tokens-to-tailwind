@@ -11,7 +11,7 @@ type StyleMap = {
 export const generateSemanticColor = (
   prefix: string,
   hasPrimitive: boolean,
-  classifyByType: boolean,
+  classifyByKeys: boolean,
   colorGroupList: Array<{ name: string; style: string }>
 ): string => {
   const paintStyles = figma.getLocalPaintStyles();
@@ -52,7 +52,7 @@ export const generateSemanticColor = (
       styleMap,
       prefix,
       hasPrimitive,
-      classifyByType,
+      classifyByKeys,
       colorGroupList
     ),
     null,
@@ -71,7 +71,7 @@ export const styleMapToColorMap = (
   styleMap: StyleMap,
   prefix: string,
   hasPrimitive: boolean,
-  classifyByType: boolean,
+  classifyByKeys: boolean,
   colorGroupList: Array<{ name: string; style: string }>
 ) => {
   const colorTypes = colorGroupList.map((group) => group.style);
@@ -82,7 +82,7 @@ export const styleMapToColorMap = (
 
   if (hasPrimitive) delete styleMap[prefix];
   const lestObject = Object.assign({}, styleMap);
-  if (classifyByType) {
+  if (classifyByKeys) {
     colorGroupList.forEach(({ name, style }) => {
       if (Object.keys(styleMap).includes(name)) {
         Object.assign(colorMaps[style], styleMap[name]);

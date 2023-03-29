@@ -2,23 +2,32 @@
   import { onMount } from 'svelte';
   import Button from './Button.svelte';
   import CodeArea from './CodeArea.svelte';
-  import CheckItem from './CheckItem.svelte';
+  import CheckBoxItem from './CheckBoxItem.svelte';
+  import TextInputItem from './TextInputItem.svelte';
   import IconArrowPath from './icons/IconArrowPath.svelte';
 
-  let primitiveColorData: string;
-  let semanticColorData: string;
+  type colorData = {
+    data: string;
+    isCopied: boolean;
+  };
+
+  let primitiveColor: colorData = {
+    data: '',
+    isCopied: false,
+  };
+  let semanticColor: colorData = {
+    data: '',
+    isCopied: false,
+  };
   let textData: string;
 
   let prefix = '';
   let hasPrimitive = false;
   let classifyByKeys = false;
 
-  let isCopiedSemantic = false;
-  let isCopiedPrimitive = false;
-
   const generateTokens = () => {
-    isCopiedSemantic = false;
-    isCopiedPrimitive = false;
+    primitiveColor.isCopied = false;
+    semanticColor.isCopied = false;
 
     parent.postMessage(
       {
@@ -34,7 +43,7 @@
   const copyText = (event) => {
     let textArea = document.createElement('textarea');
     textArea.value =
-      event.target.id === 'semantic' ? semanticColorData : primitiveColorData;
+      event.target.id === 'semantic' ? semanticColor.data : primitiveColor.data;
 
     textArea.style.position = 'fixed';
     textArea.style.left = '-999999px';
@@ -45,22 +54,25 @@
     textArea.select();
     document.execCommand('copy');
 
-    if (event.target.id === 'semantic' && isCopiedSemantic === false) {
-      isCopiedSemantic = true;
+    if (event.target.id === 'semantic' && semanticColor.isCopied === false) {
+      semanticColor.isCopied = true;
       setTimeout(() => {
-        isCopiedSemantic = false;
+        semanticColor.isCopied = false;
       }, 2000);
-    } else if (event.target.id === 'primitive' && isCopiedPrimitive === false) {
-      isCopiedPrimitive = true;
+    } else if (
+      event.target.id === 'primitive' &&
+      primitiveColor.isCopied === false
+    ) {
+      primitiveColor.isCopied = true;
       setTimeout(() => {
-        isCopiedPrimitive = false;
+        primitiveColor.isCopied = false;
       }, 2000);
     }
   };
 
   onmessage = (event) => {
-    semanticColorData = event.data.pluginMessage.semanticColorData;
-    primitiveColorData = event.data.pluginMessage.primitiveColorData;
+    semanticColor.data = event.data.pluginMessage.semanticColorData;
+    primitiveColor.data = event.data.pluginMessage.primitiveColorData;
     textData = event.data.pluginMessage.textData;
   };
 
@@ -71,22 +83,12 @@
   <div class="w-[200px] flex-shrink-0">
     <h2 class="text-lg font-bold">Settings</h2>
     <div class="mt-2 flex flex-col gap-1">
-      <CheckItem checked={hasPrimitive}>Primitive styles</CheckItem>
-
-      <label class="flex w-fit items-center gap-2">
-        prefix:
-        <input
-          type="text"
-          bind:value={prefix}
-          placeholder="primitive"
-          class="w-full rounded-sm border border-slate-500 px-1 py-0.5"
-        />
-      </label>
-
-      <CheckItem checked={classifyByKeys}>Classify by keys</CheckItem>
+      <CheckBoxItem bind:checked={hasPrimitive}>Primitive styles</CheckBoxItem>
+      <TextInputItem bind:value={prefix}>prefix:</TextInputItem>
+      <CheckBoxItem bind:checked={classifyByKeys}>Classify by keys</CheckBoxItem
+      >
     </div>
-
-    <Button on:click={generateTokens}>
+    <Button on:click={generateTokens} class="mt-8">
       generate
       <IconArrowPath />
     </Button>
@@ -94,15 +96,15 @@
 
   <div class="flex flex-grow gap-6">
     <CodeArea
-      colorData={semanticColorData}
-      isCopied={isCopiedSemantic}
+      colorData={semanticColor.data}
+      isCopied={semanticColor.isCopied}
       on:click={copyText}
     >
       tailwind.config.js
     </CodeArea>
     <CodeArea
-      colorData={primitiveColorData}
-      isCopied={isCopiedPrimitive}
+      colorData={primitiveColor.data}
+      isCopied={primitiveColor.isCopied}
       on:click={copyText}
     >
       main.css

@@ -1,5 +1,5 @@
-<script>
-  export let checked = false;
+<script lang="ts">
+  export let checked: boolean;
 </script>
 
 <label class="flex w-fit items-center gap-1">
