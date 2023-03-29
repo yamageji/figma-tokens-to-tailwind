@@ -1,5 +1,4 @@
 # Tokens to Tailwind CSS　(Figma plugins)
-
 This plugin generates utility classes for Tailwind CSS from design tokens set in the local style of Figma.
 
 *Currently only colour styles are supported.
@@ -18,9 +17,10 @@ read more:
 https://tailwindcss.com/docs/customizing-colors#using-css-variables
 
 ### Classify by keys
-If this option is checked and the style name matches a specific value, the style is classified under the corresponding 'key'. The correspondence between style names and keys is as follows.
+If this option is checked and the style name matches a specific value, the style is classified under the corresponding 'key'.
+The correspondence between style names and keys is as follows.
 
-| style name | keys |
+| style name | key |
 |--------|-------|
 | accent/* | accentColor |
 | bg/* | backgroundColor |
