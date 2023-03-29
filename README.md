@@ -11,13 +11,47 @@ This plugin generates utility classes for Tailwind CSS from design tokens set in
 
 ## Options
 ### Primitive colours
-Generates the primitive styles referenced by the semantic style as CSS variables.
+If this option is checked, the primitive styles referenced by the semantic style are generated as CSS variables.
+
+#### How to set up in Figma
+1. Classify the style by the prefix of your choice.
+2. Set the semantic color to the same value as the primitive color.
+3. Enter the name of the primitive color, excluding the prefix, in the semantic color Description.
+
+![Figure showing the back-constant method of primitive and semantic styles.](assets/description-1.png)
 
 read more:
 https://tailwindcss.com/docs/customizing-colors#using-css-variables
 
 ### Classify by keys
 If this option is checked and the style name matches a specific value, the style is classified under the corresponding 'key'.
+
+```js
+module.exports = {
+  theme: {
+    // If there is no match, everything is classified as 'colors'
+    colors: {
+      primary: '#000000', // primary
+      object: {
+        primary: '#000000', // object/primary
+      },
+    },
+    // If the style name begins with 'bg/'
+    backgroundColor: {
+      primary: '#000000', // bg/primary
+      secondary: '#000000', // bg/seconcary
+    },
+    // If the style name starts with 'text/'
+    textColor: {
+      primary: '#000000', // text/primay
+      accent: {
+        primay: '#000000', // text/accent/primay
+      },
+    },
+  },
+}
+```
+
 The correspondence between style names and keys is as follows.
 
 | style name | key |
