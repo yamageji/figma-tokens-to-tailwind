@@ -3,5 +3,7 @@
 </script>
 
 <main>
-  <MainPanel />
+  <div class="m-4">
+    <MainPanel />
+  </div>
 </main>

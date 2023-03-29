@@ -79,7 +79,7 @@
   onMount(() => generateTokens());
 </script>
 
-<div class="m-4 flex gap-8">
+<div class="flex gap-8">
   <div class="w-[200px] flex-shrink-0">
     <h2 class="text-lg font-bold">Settings</h2>
     <div class="mt-2 flex flex-col gap-1">
