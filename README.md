@@ -24,8 +24,9 @@ read more:
 https://tailwindcss.com/docs/customizing-colors#using-css-variables
 
 ### Classify by keys
-If this option is checked and the style name matches a specific value, the style is classified under the corresponding 'key'.
+If this option is checked and the style name matches a specific value, the style is classified under the corresponding key.
 
+For example
 ```js
 module.exports = {
   theme: {
