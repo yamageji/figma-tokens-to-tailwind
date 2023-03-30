@@ -12,8 +12,7 @@ figma.ui.onmessage = (msg) => {
       msg.state.prefix,
       msg.state.hasPrimitive
     );
-    const textData = generateTextStyle();
-    figma.ui.postMessage({ semanticColorData, primitiveColorData, textData });
+    figma.ui.postMessage({ semanticColorData, primitiveColorData });
   }
 };
 
