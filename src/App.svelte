@@ -1,5 +1,5 @@
 <script lang="ts">
-  import MainPanel from './components/MainPanel.svelte';
+  import MainPanel from './ui/MainPanel.svelte';
 </script>
 
 <main>

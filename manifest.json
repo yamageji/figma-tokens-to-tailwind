@@ -2,7 +2,7 @@
   "name": "Tokens to Tailwind CSS",
   "id": "1222415071406554904",
   "api": "1.0.0",
-  "main": "dist/code.js",
+  "main": "dist/code/code.js",
   "capabilities": [],
   "enableProposedApi": false,
   "editorType": ["figma"],
