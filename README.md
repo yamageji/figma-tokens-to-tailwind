@@ -35,7 +35,7 @@ colors: {
     primary: '#000000', // object/primary
   },
 },
-// If the style name begins with 'bg/'
+// If the style name starts with 'bg/'
 backgroundColor: {
   primary: '#000000', // bg/primary
   secondary: '#000000', // bg/seconcary
