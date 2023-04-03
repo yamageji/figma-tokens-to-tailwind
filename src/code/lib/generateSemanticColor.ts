@@ -1,13 +1,5 @@
 import { rgbToHex } from './rgbToHex';
 
-type ColorMap = {
-  [key: string]: string;
-};
-
-type StyleMap = {
-  [key: string]: ColorMap;
-};
-
 export const generateSemanticColor = (
   prefix: string,
   hasPrimitive: boolean,
@@ -65,6 +57,14 @@ export const generateSemanticColor = (
     .replace(/^\s+/, '');
 
   return formatSemanticColorData;
+};
+
+type ColorMap = {
+  [key: string]: string;
+};
+
+type StyleMap = {
+  [key: string]: ColorMap;
 };
 
 export const styleMapToColorMap = (

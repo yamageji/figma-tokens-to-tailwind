@@ -1,6 +1,6 @@
 export const colorGroupList = [
   { name: 'accent', style: 'accentColor' },
-  { name: 'bg', style: 'backgroundColor' },
+  { name: 'background', style: 'backgroundColor' },
   { name: 'border', style: 'borderColor' },
   { name: 'shadow', style: 'boxShadowColor' },
   { name: 'caret', style: 'caretColor' },
